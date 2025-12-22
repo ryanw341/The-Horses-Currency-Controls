@@ -2,7 +2,7 @@
   "id": "horses-currency-controls",
   "title": "The Horses Currency Controls",
   "description": "Rename, weight, and toggle D&D 5e currencies.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "authors": [{ "name": "The Horse" }],
   "compatibility": { "minimum": "13", "verified": "13" },
   "relationships": {
@@ -25,8 +25,9 @@
   "license": "MIT",
   "readme": "README.md",
   "manifest": "https://raw.githubusercontent.com/ryanw341/The-Horses-Currency-Controls/main/module.json",
-  "download": "https://github.com/ryanw341/The-Horses-Currency-Controls/archive/refs/tags/Horses-Currency-v1.0.0.zip"
+  "download": "https://github.com/ryanw341/The-Horses-Currency-Controls/archive/refs/tags/Horses-Currency-v1.0.1.zip"
 }
+
 
 
 
