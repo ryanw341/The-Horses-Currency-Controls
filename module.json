@@ -1,0 +1,29 @@
+{
+  "id": "horses-currency-controls",
+  "title": "Horses Currency Controls",
+  "description": "Rename, weight, and toggle D&D 5e currencies.",
+  "version": "1.0.0",
+  "authors": [{ "name": "The Horse" }],
+  "compatibility": { "minimum": "13", "verified": "13" },
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": { "minimum": "4", "verified": "4" }
+      }
+    ]
+  },
+  "esmodules": ["scripts/module.js"],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "license": "MIT",
+  "readme": "README.md",
+  "manifest": "module.json",
+  "download": ""
+}

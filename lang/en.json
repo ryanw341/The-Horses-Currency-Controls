@@ -1,0 +1,8 @@
+{
+  "HCC.Settings.Enabled": "{currency} enabled",
+  "HCC.Settings.EnabledHint": "Uncheck to hide this currency everywhere the 5e system uses its currency list.",
+  "HCC.Settings.Name": "{currency} name",
+  "HCC.Settings.NameHint": "Override the displayed name/label for this currency.",
+  "HCC.Settings.Weight": "{currency} weight",
+  "HCC.Settings.WeightHint": "Weight per coin. Set to 0 if your table ignores coin weight."
+}
