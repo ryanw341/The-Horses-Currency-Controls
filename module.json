@@ -24,6 +24,6 @@
   ],
   "license": "MIT",
   "readme": "README.md",
-  "manifest": "module.json",
-  "download": ""
+  "manifest": "https://raw.githubusercontent.com/ryanw341/The-Horses-Currency-Controls/main/module.json",
+  "download": "https://github.com/ryanw341/The-Horses-Currency-Controls/archive/refs/tags/Horses-Currency-v1.0.0.zip"
 }
