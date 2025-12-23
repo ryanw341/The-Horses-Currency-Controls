@@ -1,6 +1,6 @@
 const MODULE_ID = "horses-currency-controls";
 const CURRENCY_KEYS = ["pp", "gp", "ep", "sp", "cp"];
-const DEFAULT_WEIGHTS = { pp: 0.02, gp: 0.02, ep: 0.02, sp: 0.02, cp: 0.02 };
+const DEFAULT_WEIGHT = 0.02;
 const LARGE_WORLD_THRESHOLD = 100; // Actor count threshold for performance optimization
 
 let BASE_CURRENCIES = {};
@@ -20,7 +20,6 @@ Hooks.once("ready", () => {
 function registerCurrencySettings() {
   for (const key of CURRENCY_KEYS) {
     const defaultLabel = getDefaultLabel(key);
-    const defaultWeight = DEFAULT_WEIGHTS[key] ?? 0;
 
     game.settings.register(MODULE_ID, `${key}-enabled`, {
       name: game.i18n.format("HCC.Settings.Enabled", { currency: defaultLabel }),
@@ -41,18 +40,18 @@ function registerCurrencySettings() {
       default: defaultLabel,
       onChange: handleSettingsChange
     });
-
-    game.settings.register(MODULE_ID, `${key}-weight`, {
-      name: game.i18n.format("HCC.Settings.Weight", { currency: defaultLabel }),
-      hint: game.i18n.localize("HCC.Settings.WeightHint"),
-      scope: "world",
-      config: true,
-      type: Number,
-      range: { min: 0, step: 0.001 },
-      default: defaultWeight,
-      onChange: handleSettingsChange
-    });
   }
+
+  game.settings.register(MODULE_ID, "currency-weight", {
+    name: game.i18n.localize("HCC.Settings.GlobalWeight"),
+    hint: game.i18n.localize("HCC.Settings.GlobalWeightHint"),
+    scope: "world",
+    config: true,
+    type: Number,
+    range: { min: 0, step: 0.001 },
+    default: DEFAULT_WEIGHT,
+    onChange: handleSettingsChange
+  });
 }
 
 function handleSettingsChange() {
@@ -66,6 +65,7 @@ function applyCurrencyOverrides() {
   const currencies = foundry.utils.deepClone(BASE_CURRENCIES);
   const enabledCurrencies = {};
   const order = [];
+  const globalWeight = Number(game.settings.get(MODULE_ID, "currency-weight")) || 0;
 
   for (const key of CURRENCY_KEYS) {
     const existing = currencies[key];
@@ -75,7 +75,7 @@ function applyCurrencyOverrides() {
     if (!enabled) continue;
 
     const name = (game.settings.get(MODULE_ID, `${key}-name`) || "").trim();
-    const weight = Number(game.settings.get(MODULE_ID, `${key}-weight`)) || 0;
+    const weight = globalWeight;
 
     existing.label = name || existing.label;
     existing.abbreviation = deriveAbbreviation(name, existing.abbreviation ?? key.toUpperCase());
