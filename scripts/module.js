@@ -124,15 +124,16 @@ function deriveAbbreviation(name, fallback) {
 
 function refreshActorSheets() {
   // Force actors to recompute derived data
-  // Only update actors that have open sheets or are owned by connected users for better performance
+  // Collect open actor IDs once for better performance (avoid O(n²) complexity)
+  const openActorIds = new Set(
+    Object.values(ui.windows)
+      .filter(app => app?.document?.documentName === "Actor")
+      .map(app => app.document.id)
+  );
+  
   for (const actor of game.actors) {
-    // Check if actor has an open sheet
-    const hasOpenSheet = Object.values(ui.windows).some(
-      app => app?.document?.documentName === "Actor" && app?.document?.id === actor.id
-    );
-    
     // Only force prepareData on actors with open sheets or if this is a small world
-    if (hasOpenSheet || game.actors.size < 100) {
+    if (openActorIds.has(actor.id) || game.actors.size < 100) {
       if (actor.prepareData) {
         actor.prepareData();
       }
@@ -149,6 +150,12 @@ function refreshActorSheets() {
 }
 
 function setupEncumbranceWrapper() {
+  // Ensure the D&D 5e system is loaded
+  if (!CONFIG?.Actor?.documentClass) {
+    console.warn(`${MODULE_ID} | Unable to setup encumbrance wrapper - Actor document class not found`);
+    return;
+  }
+  
   // Check if libWrapper is available
   if (typeof libWrapper === "function") {
     // Wrap the _computeCurrencyWeight method on Actor5e
@@ -186,9 +193,9 @@ function computePerCurrencyWeight() {
     if (!currencyConfig) continue;
     
     const weight = currencyConfig.weight ?? 0;
-    const qty = Number(amount) || 0;
+    const qty = Number(amount);
     
-    // Validate numeric conversion
+    // Validate numeric conversion (use ?? instead of || to handle 0 correctly)
     if (isNaN(qty) || !isFinite(qty)) {
       console.warn(`${MODULE_ID} | Invalid currency amount for ${key}: ${amount}`);
       continue;

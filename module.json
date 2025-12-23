@@ -17,7 +17,9 @@
       {
         "id": "lib-wrapper",
         "type": "module",
-        "compatibility": {}
+        "compatibility": {
+          "minimum": "1.12.0"
+        }
       }
     ]
   },
