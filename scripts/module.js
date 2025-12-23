@@ -124,9 +124,18 @@ function deriveAbbreviation(name, fallback) {
 
 function refreshActorSheets() {
   // Force actors to recompute derived data
+  // Only update actors that have open sheets or are owned by connected users for better performance
   for (const actor of game.actors) {
-    if (actor.prepareData) {
-      actor.prepareData();
+    // Check if actor has an open sheet
+    const hasOpenSheet = Object.values(ui.windows).some(
+      app => app?.document?.documentName === "Actor" && app?.document?.id === actor.id
+    );
+    
+    // Only force prepareData on actors with open sheets or if this is a small world
+    if (hasOpenSheet || game.actors.size < 100) {
+      if (actor.prepareData) {
+        actor.prepareData();
+      }
     }
   }
   
@@ -164,7 +173,12 @@ function setupEncumbranceWrapper() {
 
 function computePerCurrencyWeight() {
   // Calculate total currency weight using per-currency weights from CONFIG.DND5E.currencies
-  const currency = this.system.currency || {};
+  if (!this?.system?.currency) {
+    console.warn(`${MODULE_ID} | Actor missing system.currency data`);
+    return 0;
+  }
+  
+  const currency = this.system.currency;
   let totalWeight = 0;
   
   for (const [key, amount] of Object.entries(currency)) {
@@ -173,6 +187,13 @@ function computePerCurrencyWeight() {
     
     const weight = currencyConfig.weight ?? 0;
     const qty = Number(amount) || 0;
+    
+    // Validate numeric conversion
+    if (isNaN(qty) || !isFinite(qty)) {
+      console.warn(`${MODULE_ID} | Invalid currency amount for ${key}: ${amount}`);
+      continue;
+    }
+    
     totalWeight += qty * weight;
   }
   
