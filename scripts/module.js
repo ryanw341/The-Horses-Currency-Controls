@@ -77,7 +77,7 @@ function applyCurrencyOverrides() {
 
     existing.label = name || existing.label;
     existing.abbreviation = deriveAbbreviation(name, existing.abbreviation ?? key.toUpperCase());
-    existing.unitWeight = weight;
+    existing.weight = weight;
     existing.conversion = filterConversions(existing.conversion);
 
     enabledCurrencies[key] = existing;
