@@ -1,6 +1,7 @@
 const MODULE_ID = "horses-currency-controls";
 const CURRENCY_KEYS = ["pp", "gp", "ep", "sp", "cp"];
 const DEFAULT_WEIGHTS = { pp: 0.02, gp: 0.02, ep: 0.02, sp: 0.02, cp: 0.02 };
+const LARGE_WORLD_THRESHOLD = 100; // Actor count threshold for performance optimization
 
 let BASE_CURRENCIES = {};
 
@@ -133,10 +134,8 @@ function refreshActorSheets() {
   
   for (const actor of game.actors) {
     // Only force prepareData on actors with open sheets or if this is a small world
-    if (openActorIds.has(actor.id) || game.actors.size < 100) {
-      if (actor.prepareData) {
-        actor.prepareData();
-      }
+    if (openActorIds.has(actor.id) || game.actors.size < LARGE_WORLD_THRESHOLD) {
+      actor.prepareData();
     }
   }
   
@@ -195,7 +194,7 @@ function computePerCurrencyWeight() {
     const weight = currencyConfig.weight ?? 0;
     const qty = Number(amount);
     
-    // Validate numeric conversion (use ?? instead of || to handle 0 correctly)
+    // Validate that the conversion resulted in a valid number
     if (isNaN(qty) || !isFinite(qty)) {
       console.warn(`${MODULE_ID} | Invalid currency amount for ${key}: ${amount}`);
       continue;
