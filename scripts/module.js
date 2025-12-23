@@ -13,6 +13,7 @@ Hooks.once("init", () => {
 
 Hooks.once("ready", () => {
   applyCurrencyOverrides();
+  setupEncumbranceWrapper();
 });
 
 function registerCurrencySettings() {
@@ -122,12 +123,60 @@ function deriveAbbreviation(name, fallback) {
 }
 
 function refreshActorSheets() {
+  // Force actors to recompute derived data
+  for (const actor of game.actors) {
+    if (actor.prepareData) {
+      actor.prepareData();
+    }
+  }
+  
+  // Re-render open actor sheets
   for (const app of Object.values(ui.windows)) {
     const isActorSheet = app?.document?.documentName === "Actor";
     if (isActorSheet && typeof app.render === "function") {
       app.render(false);
     }
   }
+}
+
+function setupEncumbranceWrapper() {
+  // Check if libWrapper is available
+  if (typeof libWrapper === "function") {
+    // Wrap the _computeCurrencyWeight method on Actor5e
+    libWrapper.register(
+      MODULE_ID,
+      "CONFIG.Actor.documentClass.prototype._computeCurrencyWeight",
+      computePerCurrencyWeight,
+      "OVERRIDE"
+    );
+    console.log(`${MODULE_ID} | Registered libWrapper for per-currency weight encumbrance`);
+  } else {
+    // Fallback: manually override the method
+    const ActorClass = CONFIG.Actor.documentClass;
+    if (ActorClass?.prototype?._computeCurrencyWeight) {
+      ActorClass.prototype._computeCurrencyWeight = computePerCurrencyWeight;
+      console.log(`${MODULE_ID} | Manually overridden _computeCurrencyWeight for per-currency weight`);
+    } else {
+      console.warn(`${MODULE_ID} | Unable to override currency weight calculation - method not found`);
+    }
+  }
+}
+
+function computePerCurrencyWeight() {
+  // Calculate total currency weight using per-currency weights from CONFIG.DND5E.currencies
+  const currency = this.system.currency || {};
+  let totalWeight = 0;
+  
+  for (const [key, amount] of Object.entries(currency)) {
+    const currencyConfig = CONFIG.DND5E?.currencies?.[key];
+    if (!currencyConfig) continue;
+    
+    const weight = currencyConfig.weight ?? 0;
+    const qty = Number(amount) || 0;
+    totalWeight += qty * weight;
+  }
+  
+  return totalWeight;
 }
 
 function getDefaultLabel(key) {
