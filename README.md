@@ -1,6 +1,6 @@
 # Horses Currency Controls
 
-A Foundry VTT v13 module for the 5e system to rename, weight, and toggle the default currencies (PP, GP, EP, SP, CP). Disabled currencies are removed from the system currency list so they disappear on actor sheets and related UI. The module applies a global currency weight for accurate encumbrance calculations.
+A Foundry VTT v13/v14 module for the 5e system to rename, weight, and toggle the default currencies (PP, GP, EP, SP, CP). Disabled currencies are removed from the system currency list so they disappear on actor sheets and related UI. The module applies a global currency weight for accurate encumbrance calculations.
 
 ## Usage
 
@@ -42,7 +42,7 @@ The module uses [libWrapper](https://foundryvtt.com/packages/lib-wrapper) when a
 
 ## Compatibility
 
-- Foundry VTT: v13
+- Foundry VTT: v13–v14 (verified on v14)
 - 5e system: v4 (tested baseline)
 - Recommended: [libWrapper](https://foundryvtt.com/packages/lib-wrapper) for enhanced compatibility
 
